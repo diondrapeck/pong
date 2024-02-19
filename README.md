@@ -1,1 +1,11 @@
 # pong
+
+My implementation of the classic Pong game in C++ playing against a CPU. First player to 5 points wins.
+
+**To Play**
+* Clone the repo
+* Build and run `main.cpp` in Visual Studio 2022 or the compiler of your choice
+* Have fun!
+
+**Editing the game**
+* To make the game more challenging: increase `ball.speed_*` variables, decrease `player.speed`, and/or decrease `player.height`.
