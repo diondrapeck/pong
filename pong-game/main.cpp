@@ -6,6 +6,7 @@ using namespace std;
 
 int PLAYER_SCORE = 0;
 int CPU_SCORE = 0;
+int TARGET_SCORE = 5;
 
 
 class Ball {
@@ -15,7 +16,7 @@ public:
     float radius;
 
     void Draw() {
-        DrawCircle(x, y, radius, ORANGE);
+        DrawCircle(x, y, radius, DARKBLUE);
     }
 
     void Update() {
@@ -33,10 +34,21 @@ public:
 
         if (x <= radius) {
             CPU_SCORE++;
+            reset();
         }
         if (x >= GetScreenWidth() - radius) {
             PLAYER_SCORE++;
+            reset();
         }
+    }
+
+    void reset() {
+        x = GetScreenWidth() / 2;
+        y = GetScreenHeight() / 2;
+
+        int speedChoices[] = { 1, 1 };
+        speed_x *= speedChoices[GetRandomValue(0, 1)];
+        speed_y *= speedChoices[GetRandomValue(0, 1)];
     }
 };
 
@@ -48,7 +60,7 @@ public:
     float width, height;
 
     void Draw() {
-        DrawRectangle(x, y, width, height, ORANGE);
+        DrawRectangleRounded({ x, y, width, height }, 0.8, 0, ORANGE);
     }
 
     void Update() {
@@ -88,7 +100,7 @@ int main() {
     const int screen_height = 800;
     const int frame_rate = 60;
 
-    InitWindow(screen_width, screen_height, "My Pong Game!");
+    InitWindow(screen_width, screen_height, "Diondra's Pong Game");
     SetTargetFPS(frame_rate);
 
     ball.radius = 20;
@@ -98,18 +110,18 @@ int main() {
     ball.speed_y = 7;
 
     player.height = 120;
-    player.width = 10;
-    player.x = 30;
+    player.width = 20;
+    player.x = 15;
     player.y = screen_height / 2 - player.height / 2;
     player.speed = 6;
 
     cpu.height = 120;
-    cpu.width = 10;
-    cpu.x = screen_width - 30 - cpu.width;
+    cpu.width = 20;
+    cpu.x = screen_width - 15 - cpu.width;
     cpu.y = screen_height / 2 - cpu.height / 2;
     cpu.speed = 6;
 
-    while (WindowShouldClose() == false) {  // if user hasn't hit Esc or closed the game window
+    while (WindowShouldClose() == false && CPU_SCORE < TARGET_SCORE && PLAYER_SCORE < TARGET_SCORE) {
         BeginDrawing();
 
         // Update with new locations
@@ -128,7 +140,7 @@ int main() {
 
         ClearBackground(BLACK);
 
-        // Initialize Game Boundaries and ScoreBoard
+        // Initialize game boundaries and scoreboard
         DrawLine(screen_width / 2, 0, screen_width / 2, screen_height, WHITE);
         DrawText(TextFormat("%i", PLAYER_SCORE), GetScreenWidth() * .25 - 20, 0, 80, WHITE);
         DrawText(TextFormat("%i", CPU_SCORE), GetScreenWidth() * .75, 0, 80, WHITE);
@@ -139,6 +151,22 @@ int main() {
 
         EndDrawing();
     }
+
+    while (WindowShouldClose() == false) {
+        EndDrawing();
+        ClearBackground(BLACK);
+
+        if (PLAYER_SCORE == TARGET_SCORE) {
+            BeginDrawing();
+            DrawText("YOU WIN!", GetScreenWidth() / 2 - 200, GetScreenHeight() / 2, 100, WHITE);
+        }
+
+        if (CPU_SCORE == TARGET_SCORE) {
+            BeginDrawing();
+            DrawText("YOU LOSE", GetScreenWidth() / 2 - 200 - 25, GetScreenHeight() / 2, 100, WHITE);
+        }
+    }
+
     CloseWindow();
 
     return 0;
