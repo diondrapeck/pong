@@ -149,6 +149,7 @@ int main() {
 
         // Initialize game boundaries and scoreboard
         DrawLine(screen_width / 2, 0, screen_width / 2, screen_height, WHITE);
+        DrawCircleLines(screen_width / 2, screen_height / 2, 100, WHITE);
         DrawText(TextFormat("%i", PLAYER_SCORE), GetScreenWidth() * .25 - 20, 0, 80, WHITE);
         DrawText(TextFormat("%i", CPU_SCORE), GetScreenWidth() * .75, 0, 80, WHITE);
 
