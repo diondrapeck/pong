@@ -4,11 +4,15 @@
 using namespace std;
 
 
+int PLAYER_SCORE = 0;
+int CPU_SCORE = 0;
+
+
 class Ball {
 public:
     float x, y;
-    int speed_x, speed_y;
-    int radius;
+    float speed_x, speed_y;
+    float radius;
 
     void Draw() {
         DrawCircle(x, y, radius, ORANGE);
@@ -25,6 +29,14 @@ public:
         if (y + radius >= GetScreenHeight() || y - radius <= 0) {
             speed_y *= -1;
         }
+
+
+        if (x <= radius) {
+            CPU_SCORE++;
+        }
+        if (x >= GetScreenWidth() - radius) {
+            PLAYER_SCORE++;
+        }
     }
 };
 
@@ -32,8 +44,8 @@ public:
 class Paddle {
 public:
     float x, y;
-    int speed;
-    int width, height;
+    float speed;
+    float width, height;
 
     void Draw() {
         DrawRectangle(x, y, width, height, ORANGE);
@@ -47,7 +59,6 @@ public:
         if (IsKeyDown(KEY_DOWN) && (y <= (GetScreenHeight() - speed - height))) {
             y += speed;
         }
-
     }
 
 };
@@ -55,7 +66,7 @@ public:
 
 class CPUPaddle: public Paddle {
 public:
-    void Update(int ball_y) {
+    void Update(float ball_y) {
         if (y + height / 2 > ball_y && (y >= speed)) {
             y -= speed;
         }
@@ -67,14 +78,11 @@ public:
 
 
 Ball ball;
-Paddle userPaddle;
-CPUPaddle cpuPaddle;
+Paddle player;
+CPUPaddle cpu;
 
 
 int main() {
-
-    int player_score = 0;
-    int cpu_score = 0;
 
     const int screen_width = 1200;
     const int screen_height = 800;
@@ -89,33 +97,45 @@ int main() {
     ball.speed_x = 7;
     ball.speed_y = 7;
 
-    userPaddle.height = 120;
-    userPaddle.width = 10;
-    userPaddle.x = 30;
-    userPaddle.y = screen_height / 2 - userPaddle.height / 2;
-    userPaddle.speed = 6;
+    player.height = 120;
+    player.width = 10;
+    player.x = 30;
+    player.y = screen_height / 2 - player.height / 2;
+    player.speed = 6;
 
-    cpuPaddle.height = 120;
-    cpuPaddle.width = 10;
-    cpuPaddle.x = screen_width - 30 - cpuPaddle.width;
-    cpuPaddle.y = screen_height / 2 - cpuPaddle.height / 2;
-    cpuPaddle.speed = 6;
+    cpu.height = 120;
+    cpu.width = 10;
+    cpu.x = screen_width - 30 - cpu.width;
+    cpu.y = screen_height / 2 - cpu.height / 2;
+    cpu.speed = 6;
 
     while (WindowShouldClose() == false) {  // if user hasn't hit Esc or closed the game window
         BeginDrawing();
 
+        // Update with new locations
         ball.Update();
-        userPaddle.Update();
-        cpuPaddle.Update(ball.y);
+        player.Update();
+        cpu.Update(ball.y);
+
+        // Check for collisions
+        if (CheckCollisionCircleRec(Vector2{ ball.x, ball.y }, ball.radius, Rectangle{ player.x, player.y, player.width, player.height })) {
+            ball.speed_x *= -1;
+        }
+
+        if (CheckCollisionCircleRec(Vector2{ ball.x, ball.y }, ball.radius, Rectangle{ cpu.x, cpu.y, cpu.width, cpu.height })) {
+            ball.speed_x *= -1;
+        }
 
         ClearBackground(BLACK);
 
         // Initialize Game Boundaries and ScoreBoard
         DrawLine(screen_width / 2, 0, screen_width / 2, screen_height, WHITE);
+        DrawText(TextFormat("%i", PLAYER_SCORE), GetScreenWidth() * .25 - 20, 0, 80, WHITE);
+        DrawText(TextFormat("%i", CPU_SCORE), GetScreenWidth() * .75, 0, 80, WHITE);
 
         ball.Draw();
-        userPaddle.Draw();
-        cpuPaddle.Draw();
+        player.Draw();
+        cpu.Draw();
 
         EndDrawing();
     }
