@@ -121,6 +121,13 @@ int main() {
     cpu.y = screen_height / 2 - cpu.height / 2;
     cpu.speed = 6;
 
+    while (WindowShouldClose() == false && IsKeyUp(KEY_SPACE)) {
+        BeginDrawing();
+        DrawText("First to 5 points wins. Press the SPACE bar to begin.", GetScreenWidth() / 4, GetScreenHeight() / 2, 25, WHITE);
+        EndDrawing();
+    }
+
+
     while (WindowShouldClose() == false && CPU_SCORE < TARGET_SCORE && PLAYER_SCORE < TARGET_SCORE) {
         BeginDrawing();
 
