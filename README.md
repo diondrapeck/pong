@@ -1,5 +1,7 @@
 # pong
 
+![image](https://github.com/diondrapeck/pong/assets/16376603/74acc4b4-76da-46c8-b59b-b6c520b13f5d)
+
 My implementation of the classic Pong game in C++ playing against a CPU. First player to 5 points wins.
 
 **To Play**
